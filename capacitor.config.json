@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "bike-mobile",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

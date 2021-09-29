@@ -1,0 +1,7 @@
+{
+  "name": "bike-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
