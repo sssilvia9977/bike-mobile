@@ -1,17 +1,65 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>
+            Tab1
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div>
+        <p>Baterry: {{battery}}</p>
+        <p>Device id: {{deviceID}}</p>
+    </div>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <button ion-button block (click)="onLocateUser()">Locate me</button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <p>Your latitude: {{trackedData.coordinatesLat}}</p>
+            </ion-col>
+        </ion-row>
+
+        <ion-row>
+            <ion-col>
+                <button ion-button block (click)="onStarGetConstantLocation()">Strat constant location tracker</button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <p>Your moving coordinates: {{trackedData.coordinatesLat}} {{trackedData.coordinatesLong}}</p>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <button ion-button block (click)="onStopGetConstantLocation()">Stop</button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ng-container *ngIf="allTrakedData.lenght">
+                    <p>hello</p>
+                    <ng-container *ngFor="data of allTrakedData">
+                        <p>data.velocity</p>
+                        <p>data.coordinatesLong</p>
+                    </ng-container>
+                </ng-container>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <ion-header collapse="condense">
+        <ion-toolbar>
+            <ion-title size="large">Tab 1</ion-title>
+        </ion-toolbar>
+    </ion-header>
+
+    <!-- <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+        <p style="font-size: 20px; color: white">Loading...</p>
+    </ngx-spinner> -->
+
 </ion-content>
