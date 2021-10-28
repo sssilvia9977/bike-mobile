@@ -1,0 +1,145 @@
+{
+    "name": "John's phone ID, journey Nr - UID",
+    "description": "Bike journey data collected from John's phone",
+    "properties": {
+        "style": "Cozy",
+        "balcony": true
+    },
+    "Locations": [{
+        "name": "Cluj Napoca",
+        "description": "Bike journey data collected in Cluj Napoca; Coords: the leaving point",
+        "encodingType": "application/vnd.geo+json",
+        "location": {
+            "type": "Point",
+            "coordinates": [8.4259727, 49.015308]
+        }
+    }],
+    "MultiDatastreams": [{
+        "name": "GPS Coordinates",
+        "description": "Data collected from phone GPS Coordinates of the journey - latitude and longitude",
+        "unitOfMeasurements": [{
+                "name": "decimal degrees",
+                "symbol": "dd",
+                "definition": "ucum:dd"
+            },
+            {
+                "name": "decimal degrees",
+                "symbol": "dd",
+                "definition": "ucum:dd"
+            },
+            {
+                "name": "speed",
+                "symbol": "m/s",
+                "definition": "metre per second"
+            },
+            {
+                "name": "altitude",
+                "symbol": "m",
+                "definition": "metre"
+            },
+            {
+                "name": "orientation x",
+                "symbol": "°/s",
+                "definition": "angular velocity - degrees per second"
+            },
+            {
+                "name": "orientation y",
+                "symbol": "°/s",
+                "definition": "angular velocity - degrees per second"
+            },
+            {
+                "name": "orientation z",
+                "symbol": "°/s",
+                "definition": "angular velocity - degrees per second"
+            },
+            {
+                "name": "acceleration x",
+                "symbol": "m/s^2",
+                "definition": "metre per second per second"
+            },
+            {
+                "name": "acceleration y",
+                "symbol": "m/s^2",
+                "definition": "metre per second per second"
+            },
+            {
+                "name": "acceleration z",
+                "symbol": "m/s^2",
+                "definition": "metre per second per second"
+            }
+        ],
+        "Sensor": {
+            "name": "GPS location tracking",
+            "description": "GPS location tracking sensor from the user's phone",
+            "encodingType": "text",
+            "metadata": "GPS location tracking sensor from the user's phone"
+        },
+        "ObservedProperties": [{
+                "name": "Latitude",
+                "description": "The location latituded."
+            },
+            {
+                "name": "Longitude",
+                "description": "The location longitude."
+            },
+            {
+                "name": "Speed",
+                "description": "The phone's speed."
+            },
+            {
+                "name": "Altitude",
+                "description": "The phone's altitude."
+            },
+            {
+                "name": "orientation x",
+                "description": "Orientation on the x axis."
+            },
+            {
+                "name": "orientation y",
+                "description": "Orientation on the y axis."
+            },
+            {
+                "name": "orientation z",
+                "description": "Orientation on the z axis."
+            },
+            {
+                "name": "acceleration x",
+                "description": "Acceleration on the x axis."
+            },
+            {
+                "name": "acceleration y",
+                "description": "Acceleration on the y axis."
+            },
+            {
+                "name": "acceleration z",
+                "description": "Acceleration on the z axis."
+            }
+        ],
+        "Observations": [{
+                "phenomenonTime": "2019-03-14T10:00:00Z",
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                "comentariu": "lat, long, speed, altitude, orX, orY, orZ, accX, accY, accZ"
+            },
+            {
+                "phenomenonTime": "2019-03-14T10:01:00Z",
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            },
+            {
+                "phenomenonTime": "2019-03-14T10:02:00Z",
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            },
+            {
+                "phenomenonTime": "2019-03-14T10:03:00Z",
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            },
+            {
+                "phenomenonTime": "2019-03-14T10:04:00Z",
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            },
+            {
+                "phenomenonTime": "2019-03-14T10:05:00Z",
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            }
+        ]
+    }]
+}
