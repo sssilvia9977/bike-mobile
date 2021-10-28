@@ -1,5 +1,5 @@
 {
-    "name": "John's phone ID, journey Nr - UID",
+    "name": "device UID",
     "description": "Bike journey data collected from John's phone",
     "properties": {
         "style": "Cozy",
