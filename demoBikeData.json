@@ -1,6 +1,6 @@
 {
     "name": "device UID",
-    "description": "Bike journey data collected from John's phone",
+    "description": "Bike journey data collected on 28.11.2021",
     "properties": {
         "style": "Cozy",
         "balcony": true
