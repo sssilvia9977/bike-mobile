@@ -10,7 +10,10 @@ import { AppComponent } from './app.component';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Gyroscope } from '@ionic-native/gyroscope/ngx';
 import { DeviceMotion } from '@ionic-native/device-motion/ngx';
-import { LoginScreenRoutingModule } from './login-screen/login-screen-routing-module';
+import { LoginScreenRoutingModule } from './pick-project-login-screen/login-screen-routing-module';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,10 @@ import { LoginScreenRoutingModule } from './login-screen/login-screen-routing-mo
     PlacesService,
     Geolocation,
     Gyroscope,
-    DeviceMotion
+    DeviceMotion,
+    AndroidPermissions,
+    LocationAccuracy,
+    BackgroundMode
   ],
   exports: [LoginScreenRoutingModule],
   bootstrap: [AppComponent],

@@ -13,44 +13,29 @@
     </div>
 
     <ion-grid>
-        <ion-row>
-            <ion-col>
-                <button ion-button block (click)="onLocateUser()">Locate me</button>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col>
-                <p>Your latitude: {{trackedData.coordinatesLat}}</p>
-            </ion-col>
-        </ion-row>
-
-        <ion-row>
-            <ion-col>
-                <button ion-button block (click)="onStarGetConstantLocation()">Strat constant location tracker</button>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col>
-                <p>Your moving coordinates: {{trackedData.coordinatesLat}} {{trackedData.coordinatesLong}}</p>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col>
-                <button ion-button block (click)="onStopGetConstantLocation()">Stop</button>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col>
-                <ng-container *ngIf="allTrakedData.lenght">
-                    <p>hello</p>
-                    <ng-container *ngFor="data of allTrakedData">
-                        <p>data.velocity</p>
-                        <p>data.coordinatesLong</p>
-                    </ng-container>
-                </ng-container>
+        <ion-row justify-content-center>
+            <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+                <div padding *ngIf="!startJourney">
+                    <ion-button size="large" expand="block" (click)="onStarGetConstantLocation()">Start journey</ion-button>
+                </div>
+                <div padding *ngIf="startJourney">
+                    <ion-button size="large" expand="block" (click)="onStopGetConstantLocation()">Stop</ion-button>
+                </div>
+                <div id="collectingData" class="collectingData" padding *ngIf="startJourney">
+                    Collecting data...
+                </div>
+                <div padding>
+                    <ion-button size="large" expand="block" (click)="onSendDataToServer()">Send data</ion-button>
+                </div>
             </ion-col>
         </ion-row>
     </ion-grid>
+
+    <ng-container *ngIf="geolocationFinalData">
+        <div *ngFor="let data of geolocationFinalData">
+            {{ data }}
+        </div>
+    </ng-container>
 
     <ion-header collapse="condense">
         <ion-toolbar>

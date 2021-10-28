@@ -2,7 +2,7 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LoginScreenComponent } from './login-screen.component';
+import { LoginScreenPage } from './login-screen.page';
 import { LoginScreenRoutingModule } from './login-screen-routing-module';
 
 
@@ -13,6 +13,6 @@ import { LoginScreenRoutingModule } from './login-screen-routing-module';
     FormsModule,
     LoginScreenRoutingModule
   ],
-  declarations: [LoginScreenComponent]
+  declarations: [LoginScreenPage]
 })
 export class LoginScreenModule {}

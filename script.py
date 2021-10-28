@@ -1,0 +1,13 @@
+import os
+print('Hello World!')
+os.system('npm install')
+os.system('npm install cordova-plugin-request-location-accuracy')
+os.system('npm install @ionic-native/location-accuracy')
+os.system('ionic cap sync')
+os.system('npm install @capacitor/device')
+os.system('npx cap sync')
+os.system('ionic build')
+os.system('ionic cap add android')
+os.system('ionic cap copy')
+os.system('ionic cap sync')
+os.system('ionic cap open android')

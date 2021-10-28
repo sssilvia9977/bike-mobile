@@ -3,13 +3,17 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'tabs',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+    path: '',
+    loadChildren: () => import('./pick-project-login-screen/login-screen.module').then(m => m.LoginScreenModule)
   },
   {
-    path: '',
-    loadChildren: () => import('./login-screen/login-scree.module').then(m => m.LoginScreenModule)
+    path: 'tabs',
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  },  {
+    path: 'pick-user-login',
+    loadChildren: () => import('./pick-user-login/pick-user-login.module').then( m => m.PickUserLoginPageModule)
   }
+
 ];
 @NgModule({
   imports: [

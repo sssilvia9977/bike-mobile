@@ -1,29 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { Tab1Page } from '../tab1/tab1.page';
 import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
         path: 'tab1',
         loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+        
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/tab1', 
         pathMatch: 'full'
       }
     ]
-  },
-  //asta de jos nu cred ca va mai trebui pt ca la "" ma duc pe login
-  // {
-  //   path: '',
-  //   redirectTo: '/tabs/tab1',
-  //   pathMatch: 'full'
-  // }
+  }
 ];
 
 @NgModule({
