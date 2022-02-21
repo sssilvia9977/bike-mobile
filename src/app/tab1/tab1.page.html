@@ -7,11 +7,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-    <div>
-        <p>Baterry: {{battery}}</p>
-        <p>Device id: {{deviceID}}</p>
-    </div>
-
     <ion-grid>
         <ion-row justify-content-center>
             <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
@@ -21,30 +16,48 @@
                 <div padding *ngIf="startJourney">
                     <ion-button size="large" expand="block" (click)="onStopGetConstantLocation()">Stop</ion-button>
                 </div>
+                <!-- <div padding>
+                    <ion-button size="large" expand="block" (click)="onSendDataToServer()">Send data to frost server</ion-button>
+                </div> -->
                 <div id="collectingData" class="collectingData" padding *ngIf="startJourney">
                     Collecting data...
-                </div>
-                <div padding>
-                    <ion-button size="large" expand="block" (click)="onSendDataToServer()">Send data</ion-button>
                 </div>
             </ion-col>
         </ion-row>
     </ion-grid>
 
-    <ng-container *ngIf="geolocationFinalData">
-        <div *ngFor="let data of geolocationFinalData">
-            {{ data }}
-        </div>
-    </ng-container>
+    <div class="showDataClass">
+        <ng-container *ngIf="showDataForTest && allGeolocationData">
+            <p> Geolocation</p>
+            <div *ngFor="let data of allGeolocationData">
+                {{ data.timeStamp }}, {{ data.coordinatesLat }}, {{ data.coordinatesLong }}
+                <hr>
+            </div>
+        </ng-container>
+        <br>
+
+        <ng-container *ngIf="showDataForTest && allGyroscopeData">
+            <p> Gyroscope</p>
+            <div *ngFor="let data of allGyroscopeData">
+                {{ data.timeStamp }}, {{ data.orientationX }}, {{ data.orientationY }}, {{ data.orientationZ }}
+                <hr>
+            </div>
+        </ng-container>
+        <br>
+
+        <ng-container *ngIf="showDataForTest && allAccelerationData">
+            <p> Acceleration</p>
+            <div *ngFor="let data of allAccelerationData">
+                {{ data.timeStamp }}, {{ data.accelerationX }}, {{ data.accelerationY }}, {{ data.accelerationZ }}
+                <hr>
+            </div>
+        </ng-container>
+    </div>
 
     <ion-header collapse="condense">
         <ion-toolbar>
             <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
     </ion-header>
-
-    <!-- <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
-        <p style="font-size: 20px; color: white">Loading...</p>
-    </ngx-spinner> -->
 
 </ion-content>

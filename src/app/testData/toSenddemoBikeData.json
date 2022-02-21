@@ -1,0 +1,110 @@
+Prima oara fac thing ul apoi cer de la server id ul lui ca sa pot atasa celelalte proprietati
+Things {
+    "name": "device UID",
+    "description": "Bike journey data collected on 28.11.2021",
+    "properties": {
+        "style": "Cozy",
+        "balcony": true
+    }
+}
+
+Locations {
+    "name": "Cluj Napoca",
+    "description": "Bike journey data collected in Cluj Napoca; Coords: the leaving point",
+    "encodingType": "application/vnd.geo+json",
+    "location": {
+        "type": "Point",
+        "coordinates": [8.4259727, 49.015308]
+    },
+    "Things": [
+        { "@iot.id": 14 }
+    ]
+}
+
+MultiDatastreams {
+    "name": "GPS Coordinates",
+    "description": "Data collected from phone GPS Coordinates of the journey - lat, long, speed, altitude, orX, orY, orZ, accX, accY, accZ",
+    "multiObservationDataTypes": [
+        "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+        "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+    ],
+    "unitOfMeasurements": [{
+            "name": "decimal degrees",
+            "symbol": "dd",
+            "definition": "ucum:dd"
+        },
+        {
+            "name": "decimal degrees",
+            "symbol": "dd",
+            "definition": "ucum:dd"
+        }
+    ],
+    "Sensor": {
+        "name": "GPS location tracking",
+        "description": "GPS location tracking sensor from the user's phone",
+        "encodingType": "text",
+        "metadata": "GPS location tracking sensor from the user's phone"
+    },
+    "ObservedProperties": [{
+            "name": "Latitude",
+            "definition": "https://dbpedia.org/page/Latitude",
+            "description": "The location latituded."
+        },
+        {
+            "name": "Longitude",
+            "definition": "https://dbpedia.org/page/longitude",
+            "description": "The location longitude."
+        }
+    ],
+    "Observations": [{
+            "phenomenonTime": "2019-03-14T10:00:00Z",
+            "result": [1, 2]
+        },
+        {
+            "phenomenonTime": "2019-03-14T10:01:00Z",
+            "result": [1, 2]
+        },
+        {
+            "phenomenonTime": "2019-03-14T10:02:00Z",
+            "result": [1, 2]
+        }
+    ],
+    "Thing": { "@iot.id": 14 }
+}
+
+
+Observations {
+    "Things": [
+        { "@iot.id": 14 }
+    ],
+    [{
+            "phenomenonTime": "2019-03-14T10:00:00Z",
+            "result": [1, 2]
+        },
+        {
+            "phenomenonTime": "2019-03-14T10:01:00Z",
+            "result": [1, 2]
+        },
+        {
+            "phenomenonTime": "2019-03-14T10:02:00Z",
+            "result": [1, 2]
+        }
+    ]
+}
+
+{
+    "Observations": [{
+            "phenomenonTime": "2019-03-14T10:00:00Z",
+            "result": [1, 2]
+        },
+        {
+            "phenomenonTime": "2019-03-14T10:01:00Z",
+            "result": [1, 2]
+        },
+        {
+            "phenomenonTime": "2019-03-14T10:02:00Z",
+            "result": [1, 2]
+        }
+    ],
+    "MultiDatastream": { "@iot.id": 9 },
+}

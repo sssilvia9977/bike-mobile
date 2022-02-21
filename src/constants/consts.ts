@@ -4,6 +4,14 @@ export class GeolocationData {
     coordinatesLong: number;
     altitude: number;
     velocity: number;
+
+    constructor(){
+        this.timeStamp = 0;
+        this.coordinatesLat = 0;
+        this.coordinatesLong = 0;
+        this.altitude = 0;
+        this.velocity = 0;
+    }
 };
 
 export class AccelerationData {

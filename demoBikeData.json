@@ -2,8 +2,8 @@
     "name": "device UID",
     "description": "Bike journey data collected on 28.11.2021",
     "properties": {
-        "style": "Cozy",
-        "balcony": true
+        "username": "Cozy",
+        "project": true
     },
     "Locations": [{
         "name": "Cluj Napoca",
@@ -16,7 +16,19 @@
     }],
     "MultiDatastreams": [{
         "name": "GPS Coordinates",
-        "description": "Data collected from phone GPS Coordinates of the journey - latitude and longitude",
+        "description": "Data collected from phone GPS Coordinates of the journey - lat, long, speed, altitude, orX, orY, orZ, accX, accY, accZ",
+        "multiObservationDataTypes": [
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+        ],
         "unitOfMeasurements": [{
                 "name": "decimal degrees",
                 "symbol": "dd",
@@ -76,49 +88,58 @@
         },
         "ObservedProperties": [{
                 "name": "Latitude",
+                "definition": "https://dbpedia.org/page/Latitude",
                 "description": "The location latituded."
             },
             {
                 "name": "Longitude",
+                "definition": "https://dbpedia.org/page/longitude",
                 "description": "The location longitude."
             },
             {
                 "name": "Speed",
+                "definition": "https://dbpedia.org/page/Velocity",
                 "description": "The phone's speed."
             },
             {
                 "name": "Altitude",
+                "definition": "https://dbpedia.org/page/Altitude",
                 "description": "The phone's altitude."
             },
             {
                 "name": "orientation x",
+                "definition": "https://dbpedia.org/page/Gyroscope",
                 "description": "Orientation on the x axis."
             },
             {
                 "name": "orientation y",
+                "definition": "https://dbpedia.org/page/Gyroscope",
                 "description": "Orientation on the y axis."
             },
             {
                 "name": "orientation z",
+                "definition": "https://dbpedia.org/page/Gyroscope",
                 "description": "Orientation on the z axis."
             },
             {
                 "name": "acceleration x",
+                "definition": "https://dbpedia.org/page/Acceleration",
                 "description": "Acceleration on the x axis."
             },
             {
                 "name": "acceleration y",
+                "definition": "https://dbpedia.org/page/Acceleration",
                 "description": "Acceleration on the y axis."
             },
             {
                 "name": "acceleration z",
+                "definition": "https://dbpedia.org/page/Acceleration",
                 "description": "Acceleration on the z axis."
             }
         ],
         "Observations": [{
                 "phenomenonTime": "2019-03-14T10:00:00Z",
-                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                "comentariu": "lat, long, speed, altitude, orX, orY, orZ, accX, accY, accZ"
+                "result": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             },
             {
                 "phenomenonTime": "2019-03-14T10:01:00Z",

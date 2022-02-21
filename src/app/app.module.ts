@@ -14,6 +14,9 @@ import { LoginScreenRoutingModule } from './pick-project-login-screen/login-scre
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+import { HttpClientModule } from '@angular/common/http';
+import { FrostCommunication } from 'src/services/frost-communication.service';
+import { NetworkService } from 'src/services/network.service';
 
 @NgModule({
   declarations: [
@@ -24,11 +27,14 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule,
-    LoginScreenRoutingModule
+    LoginScreenRoutingModule,
+    HttpClientModule,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     PlacesService,
+    FrostCommunication,
+    NetworkService,
     Geolocation,
     Gyroscope,
     DeviceMotion,

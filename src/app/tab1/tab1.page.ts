@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Device, DeviceId } from '@capacitor/device';
 import { Geolocation, Geoposition, PositionError } from '@ionic-native/geolocation/ngx';
 import { Subscription } from 'rxjs';
-import { AccelerationData, CollectingData, GeolocationData, GyroscopeData, SENSORS } from 'src/constants/consts';
+import { AccelerationData, GeolocationData, GyroscopeData, SENSORS } from 'src/constants/consts';
 import { PlacesService } from './../../services/places.service'
 import { Gyroscope, GyroscopeOrientation, GyroscopeOptions } from '@ionic-native/gyroscope/ngx';
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion/ngx';
@@ -10,6 +9,11 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Platform } from '@ionic/angular';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { FrostCommunication } from 'src/services/frost-communication.service';
+import { NetworkService } from 'src/services/network.service';
+import { timer, of, interval } from 'rxjs';
+import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
+import { registerPlugin } from "@capacitor/core";
 
 
 @Component({
@@ -18,23 +22,26 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
   styleUrls: ['tab1.page.scss']
 })
 
-// la pornire app, mi se activeaza gps ul
-// cand apas pe start prima oara: error la background location (l am comentat) , locationAccPermission
+// maxDataSize:
+// The number of bytes that can be loaded before the server stops loading more entities and returns the result is 25000000 (25 MB).
+
+// ideeeee
+// cand se da stop journey, salvez in telefon user tot fisierul deja formatat care se trimite la 
+// frost server. Deci nu am nevoie sa salvez fiecare senzor in parte in memorie telefon. 
+// Datele le salvez intr un array, la STOPJOURNEY formatez obj pt frost, il fac json si in salvez in mem telefon.
+// cand am net, atunci il trimit. Chiar daca app se inchide, fisierul pt frost este salvat. 
+
+// in timpul calatoriei, app va colecta date si din background
 
 export class Tab1Page implements OnInit {
   subscription = new Subscription();
-
+  BackgroundGeolocation = registerPlugin<BackgroundGeolocationPlugin>("BackgroundGeolocation");
   battery: number;
-  deviceId: DeviceId;
+  deviceId: string;
   startJourney: boolean = false;
 
-  geolocationData: GeolocationData;
   allGeolocationData: GeolocationData[] = [];
-
-  accelerationData: AccelerationData;
   allAccelerationData: AccelerationData[] = [];
-
-  gyroscopeData: GyroscopeData;
   allGyroscopeData: GyroscopeData[] = [];
 
   SENSORS = SENSORS;
@@ -42,7 +49,10 @@ export class Tab1Page implements OnInit {
     frequency: 1000
   }
 
-  geolocationFinalData: any;
+  showDataForTest: boolean = true;
+
+  latStart: number;
+  longStart: number;
 
   constructor(
     private geolocation: Geolocation,
@@ -51,64 +61,71 @@ export class Tab1Page implements OnInit {
     private deviceMotion: DeviceMotion,
     private androidPermissions: AndroidPermissions,
     private locationAccuracy: LocationAccuracy,
+    private frostCommunication: FrostCommunication,
     private platform: Platform,
-    private backgroundMode: BackgroundMode
-  ) {
-    platform.ready().then(() => {
-      this.checkPermission();
-    })
-    //this.backgroundMode.enable();
+    private backgroundMode: BackgroundMode,
+    private networkService: NetworkService,
+  ) { 
+    this.allGeolocationData = [new GeolocationData()];
   }
 
-  ngOnInit(): void {
-    this.geolocationData = new GeolocationData();
-    this.accelerationData = new AccelerationData();
-    this.gyroscopeData = new GyroscopeData();
-    // Device.getBatteryInfo().then(e =>this.battery = e.batteryLevel);
-    // Device.getId().then(e => this.deviceId = e );
-    // this.placeService.addDeviceId(this.deviceId);
-  }
+  ngOnInit(): void { }
 
   onStarGetConstantLocation() {
     this.checkPermission();
+  }
+
+  startCollectingData() {
     this.startJourney = true;
     this.getCoordsAltitudeVelocity();
     this.getAcceleration();
     this.getGyroscope();
-  }
 
-  //TODO: run in backgroud daca user intra in alta ap/ primeste telefon, blocheaza telefon
-
-  onStopGetConstantLocation() {
-    // TODO: verifica limita unui fisier stocat pe telefonul userului
-    this.startJourney = false;
-    this.subscription.unsubscribe();
-    this.placeService.addTrackedDataItem(this.allGeolocationData, this.allAccelerationData, this.allGyroscopeData);
-    this.placeService.getPlaces().then(
-      (result) => {
-        debugger
-        this.geolocationFinalData = result
+    this.geolocation.getCurrentPosition().then(
+      (position) => {
+        this.latStart = position.coords.latitude;
+        this.longStart = position.coords.longitude;
+        // !!!!! NU MERGE DELOC CITIRE COORDS CU LIVE RELOAD
+        this.placeService.setInitialLocationCoords(this.latStart, this.longStart);
       }
     )
+      .catch(err => {
+        alert(err.message)
+      })
+  }
+
+  onStopGetConstantLocation() {
+    this.startJourney = false;
+    this.showDataForTest = true;
+
+    this.networkService.getStatus().then(resp => {
+      if (!resp.connected) { alert("Please connect to the internet"); }
+      else {
+        this.placeService.formatData(this.allGeolocationData, this.allAccelerationData, this.allGyroscopeData);;
+      }
+    });
+
+    this.subscription.unsubscribe();
   }
 
   onSendDataToServer() {
-    // cum le afisez in forma asta, sa vad de test ca se colecteaza bine?
-    this.placeService.getAccelerations();
-    this.placeService.getGyroscope();
-    this.placeService.getPlaces();
+    this.networkService.getStatus().then(resp => {
+      if (!resp.connected) { alert("Please connect to the internet"); }
+      else {
+        this.placeService.sendDataToServer();
+      }
+    });
   }
 
   getGyroscope() {
-    // colecteaza doar date diferite
-    this.subscription.add(this.gyroscope.watch().subscribe(
+    this.subscription.add(this.gyroscope.watch({ frequency: 10000 }).subscribe(
       (orientation: GyroscopeOrientation) => {
-        console.log(orientation.x, orientation.y, orientation.z, orientation.timestamp);
-        this.gyroscopeData.timeStamp = orientation.timestamp;
-        this.gyroscopeData.orientationX = orientation.x;
-        this.gyroscopeData.orientationY = orientation.y;
-        this.gyroscopeData.orientationZ = orientation.z;
-        this.gyroscopeDifferentFromPrevious(this.gyroscopeData, this.allGyroscopeData);
+        let gyroscopeData = new GyroscopeData();
+        gyroscopeData.timeStamp = orientation.timestamp;
+        gyroscopeData.orientationX = orientation.x;
+        gyroscopeData.orientationY = orientation.y;
+        gyroscopeData.orientationZ = orientation.z;
+        this.allGyroscopeData.push(gyroscopeData)
       },
       (error: any) => {
         console.log(error);
@@ -118,15 +135,14 @@ export class Tab1Page implements OnInit {
   }
 
   getAcceleration() {
-    // colecteaza doar date diferite
-    this.subscription.add(this.deviceMotion.watchAcceleration().subscribe(
+    this.subscription.add(this.deviceMotion.watchAcceleration({ frequency: 10000 }).subscribe(
       (acceleration: DeviceMotionAccelerationData) => {
-        console.log(acceleration + " " + acceleration.timestamp);
-        this.accelerationData.timeStamp = acceleration.timestamp;
-        this.accelerationData.accelerationX = acceleration.x;
-        this.accelerationData.accelerationY = acceleration.y;
-        this.accelerationData.accelerationZ = acceleration.z;
-        this.accelerationDifferentFromPrevious(this.accelerationData, this.allAccelerationData);
+        let accelerationData = new AccelerationData();
+        accelerationData.timeStamp = acceleration.timestamp;
+        accelerationData.accelerationX = acceleration.x;
+        accelerationData.accelerationY = acceleration.y;
+        accelerationData.accelerationZ = acceleration.z;
+        this.allAccelerationData.push(accelerationData);
       },
       (error: any) => {
         console.log(error);
@@ -136,56 +152,106 @@ export class Tab1Page implements OnInit {
   }
 
   getCoordsAltitudeVelocity() {
-    // colecteaza doar date diferite
-    this.subscription.add(this.geolocation.watchPosition({ enableHighAccuracy: true }).subscribe(position => {
-      if ((position as Geoposition).coords != undefined) {
+    //this.getCoordsOnlyForeground();
+    this.getCoordsBackground();
+  }
+
+  getCoordsBackground() {
+    let options = {
+      backgroundMessage: "Cancel to prevent battery drain.",
+      backgroundTitle: "Tracking You.",
+      requestPermissions: true,
+      stale: false,
+      interval: 10000 
+      //distanceFilter: 0
+    }
+    
+      let last_location;
+      this.BackgroundGeolocation.addWatcher(
+        options,
+        function (location) {
+            last_location = location || undefined;
+            let geolocationData = new GeolocationData();
+            
+            geolocationData.timeStamp = location.time;
+            geolocationData.coordinatesLat = location.longitude;
+            geolocationData.coordinatesLong = location.latitude;
+            geolocationData.altitude = location.altitudeAccuracy;
+            geolocationData.velocity = location.speed;
+
+            alert(" merg "+ geolocationData.coordinatesLong);
+            try{
+              //this.allGeolocationData.push(geolocationData)
+              alert(this.allGeolocationData[0]);
+              alert(this.allGeolocationData[0].altitude);
+              this.allGeolocationData.push(geolocationData);
+            } catch(error){
+              alert(error);
+              alert(this.allGeolocationData[0].altitude);
+            }
+            
+            alert(" merge "+ location.longitude);
+        }
+      ).then(function (id) {
+          setTimeout(function () {
+              this.BackgroundGeolocation.removeWatcher({id});
+          });
+      });
+  
+   
+
+    // this.BackgroundGeolocation.addWatcher(options,
+    //   function callback(location, error) {
+    //     if (error) {
+    //       if (error.code === "NOT_AUTHORIZED") {
+    //         if (window.confirm(
+    //           "This app needs your location, " +
+    //           "but does not have permission.\n\n" +
+    //           "Open settings now?"
+    //         )) {
+    //           this.BackgroundGeolocation.openSettings();
+    //         }
+    //       }
+    //       return alert(error.message);
+    //     }
+    //     else {
+    //       let geolocationData = new GeolocationData();
+    //       geolocationData.timeStamp = location.time;
+    //       geolocationData.coordinatesLat = location.longitude;
+    //       geolocationData.coordinatesLong = location.latitude;
+    //       geolocationData.altitude = location.altitudeAccuracy;
+    //       geolocationData.velocity = location.speed;
+    //       this.allGeolocationData.push(geolocationData);
+    //       alert(" mergeee "+ location.longitude);
+    //     }
+    //   }).then((watcher_id: any) => {
+    //     this.BackgroundGeolocation.removeWatcher({
+    //       id: watcher_id
+    //  });
+    //   })
+
+  }
+
+  getCoordsOnlyForeground() {
+    interval(10000).subscribe(res =>
+      this.geolocation.getCurrentPosition({ enableHighAccuracy: true }).then((position) => {
+        let geolocationData = new GeolocationData();
         var geoposition = (position as Geoposition);
         console.log('Latitude: ' + geoposition.coords.latitude + ' - Longitude: ' + geoposition.coords.longitude);
-        this.geolocationData.timeStamp = geoposition.timestamp;
-        this.geolocationData.coordinatesLat = geoposition.coords.latitude;
-        this.geolocationData.coordinatesLong = geoposition.coords.longitude;
-        this.geolocationData.altitude = geoposition.coords.altitudeAccuracy;
-        this.geolocationData.velocity = geoposition.coords.speed;
-        this.geolocationDifferentFromPrevious(this.geolocationData, this.allGeolocationData);
-      } else {
-        var positionError = (position as PositionError);
-        console.log('Error ' + positionError.code + ': ' + positionError.message);
-        this.placeService.addErrorTracking(this.SENSORS.GEOPOSITION, positionError.message);
-      }
-    }))
+        geolocationData.timeStamp = geoposition.timestamp;
+        geolocationData.coordinatesLat = geoposition.coords.latitude;
+        geolocationData.coordinatesLong = geoposition.coords.longitude;
+        geolocationData.altitude = geoposition.coords.altitudeAccuracy;
+        geolocationData.velocity = geoposition.coords.speed;
+        this.allGeolocationData.push(geolocationData);
+      }).catch((error) => {
+        console.log('Error getting location', error);
+      })
+    )
   }
 
-  geolocationDifferentFromPrevious(geoloc: GeolocationData, allGeoLocs: GeolocationData[]): void {
-    if (allGeoLocs.length === 0) {
-      this.allGeolocationData.push(geoloc);
-    }
-    if (allGeoLocs.length >= 1 && allGeoLocs[allGeoLocs.length - 1].coordinatesLat !== geoloc.coordinatesLat &&
-      allGeoLocs[allGeoLocs.length - 1].coordinatesLong !== geoloc.coordinatesLong) {
-      this.allGeolocationData.push(geoloc);
-    }
-  }
 
-  accelerationDifferentFromPrevious(acc: AccelerationData, allAcc: AccelerationData[]): void {
-    if (allAcc.length === 0) {
-      this.allAccelerationData.push(acc);
-    }
-    if (allAcc.length >= 1 && allAcc[allAcc.length - 1].accelerationX !== acc.accelerationX &&
-      allAcc[allAcc.length - 1].accelerationY !== acc.accelerationY &&
-      allAcc[allAcc.length - 1].accelerationZ !== acc.accelerationZ) {
-      this.allAccelerationData.push(acc);
-    }
-  }
 
-  gyroscopeDifferentFromPrevious(gyroscope: GyroscopeData, allGyroscope: GyroscopeData[]): void {
-    if (allGyroscope.length === 0) {
-      this.allGyroscopeData.push(gyroscope);
-    }
-    if (allGyroscope.length >= 1 && allGyroscope[allGyroscope.length - 1].orientationX !== gyroscope.orientationX &&
-      allGyroscope[allGyroscope.length - 1].orientationY !== gyroscope.orientationY &&
-      allGyroscope[allGyroscope.length - 1].orientationZ !== gyroscope.orientationZ) {
-      this.allGyroscopeData.push(gyroscope);
-    }
-  }
 
   checkPermission() {
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
@@ -197,7 +263,7 @@ export class Tab1Page implements OnInit {
         }
       },
       error => {
-        alert(error);
+        alert("eroare checkPerm " + error);
       }
     );
   }
@@ -211,15 +277,13 @@ export class Tab1Page implements OnInit {
             error => { alert(error + " locationAccPermission ") });
       }
     });
-    // this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_BACKGROUND_LOCATION)
-    //   .then(() => { console.log("background location ok") },
-    //     error => { alert(error + " background location") });
   }
 
   enableGPS() {
     this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
       () => {
-        alert('GPS in enabled')
+        alert('GPS is enabled');
+        this.startCollectingData();
       },
       error => alert(error + " locationAccuracy ")
     );

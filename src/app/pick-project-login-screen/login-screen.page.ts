@@ -11,14 +11,15 @@ export class LoginScreenPage implements OnInit {
 
   constructor(
     // private  authService:  AuthService, 
-    private router: Router
+    private router: Router,
   ) { }
 
   ngOnInit() {
   }
 
   pickProject(form) {
-    this.router.navigateByUrl('pick-user-login');
+    this.router.navigateByUrl('tabs');
+    //this.router.navigateByUrl('pick-user-login');
     // this.authService.register(form.value).subscribe((res) => {
     //   this.router.navigateByUrl('home');
     // });
