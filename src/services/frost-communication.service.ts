@@ -5,7 +5,7 @@ import { DataTemplate, Locations, MultiDatastreams } from 'src/constants/dataTem
 
 @Injectable()
 export class FrostCommunication {
-     private baseUrl: string = "http://193.226.7.70/FROST-Server/"; 
+    private baseUrl: string = "http://193.226.7.70/FROST-Server/"; 
     //private baseUrl: string = "http://localhost:8080/FROST-Server/";
     private sendInitialThingURL: string = this.baseUrl + "v1.1/Things";  // sa nu fie 1.0??
 

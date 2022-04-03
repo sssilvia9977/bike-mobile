@@ -41,3 +41,7 @@ export const TrackedDataFields = {
     ALTITUDE: "altitude",
     VELOCITY: "velocity",
 }
+
+export const DataVisReference = {
+    projectReference: "bikeProject123"
+}

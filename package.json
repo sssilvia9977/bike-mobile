@@ -32,6 +32,7 @@
         "@capacitor/status-bar": "1.0.3",
         "@capacitor/storage": "^1.2.0",
         "@ionic-native/android-permissions": "^5.36.0",
+        "@ionic-native/background-geolocation": "^5.36.0",
         "@ionic-native/background-mode": "^5.36.0",
         "@ionic-native/device": "^5.36.0",
         "@ionic-native/device-motion": "^5.36.0",

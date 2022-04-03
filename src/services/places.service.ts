@@ -4,6 +4,7 @@ import { Storage } from '@capacitor/storage';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { AccelerationData, GeolocationData, GyroscopeData, } from 'src/constants/consts';
 import { DataTemplate, Locations, MultiDatastreams, Observation, Result, UnitOfMeasurement } from 'src/constants/dataTemplate';
+import { DataVisualizationService } from './data-visualization.service';
 import { FrostCommunication } from './frost-communication.service';
 
 
@@ -27,6 +28,7 @@ export class PlacesService {
 
     constructor(
         private frostCommunication: FrostCommunication,
+        private dataVisualizationService: DataVisualizationService,
     ) {
         this.dataTemplate = new DataTemplate();
         const today = new Date();
@@ -35,6 +37,7 @@ export class PlacesService {
 
         Device.getId().then(e => {
             this.dataTemplate.name = "Data from device id: " + e.uuid;
+            this.deviceId = e.uuid;
         });
     }
 
@@ -60,25 +63,36 @@ export class PlacesService {
                 resultBuild.long = allGeolocationData[i].coordinatesLong;
                 this.addResultToObservationBuild(new Date(allAccelerationData[i].timeStamp), resultBuild);
             }
-            this.multiDatastreams.Observations = this.observationsBuild;        
+            this.multiDatastreams.Observations = this.observationsBuild;
             this.sendDataToServer();
         }
-       
+
     }
 
     sendDataToServer() {
-        // ce e mai jos am rulat si am primit id thing 3. Restul trimit tot acolo
-        // trimite prima oara thingul si tine minte id ul lui
-        // this.frostCommunication.sendInitialThing(this.dataTemplate).then(thingId =>
-        //     // trimite locatia gen Locations
-        //     this.frostCommunication.sendLocation(this.locations, thingId).subscribe()
-        // );
+        this.dataVisualizationService.checkIfNewDevice(this.deviceId).then(thingId => {
+            if (thingId !== 0) {
+                this.frostCommunication.sendMultidatastream(this.multiDatastreams, thingId).subscribe(
+                    (res) => { alert("Data recorded") },
+                    error => alert(error.message + " " + error.error.message)
+                );
+            }
+            else {
+                this.frostCommunication.sendInitialThing(this.dataTemplate).then(thingId => {
+                    // trimite locatia gen Locations
+                    this.frostCommunication.sendLocation(this.locations, thingId).subscribe();
+                    //trimite si la datavis server
+                    this.dataVisualizationService.sendThingForProject(thingId, this.deviceId).subscribe();
+                    //persist thing's multidatastream
+                    this.frostCommunication.sendMultidatastream(this.multiDatastreams, thingId).subscribe(
+                        (res) => { alert("Data recorded") },
+                        error => alert(error.message + " " + error.error.message)
+                    );
+                });
+            }
+        })
 
-        // multidata stream 86 pt local 3 remote
-        this.frostCommunication.sendMultidatastream(this.multiDatastreams, 3).subscribe(
-            (res) => {},
-            error => alert( error.message + " " +  error.error.message)
-        );
+
 
     }
 
@@ -87,8 +101,8 @@ export class PlacesService {
         let obs: Observation = new Observation();
         obs.phenomenonTime = timeStamp;
         obs.result = [resultBuild.lat, resultBuild.long,
-            resultBuild.orientationX, resultBuild.orientationY, resultBuild.orientationZ,
-            resultBuild.accX, resultBuild.accY, resultBuild.accZ]
+        resultBuild.orientationX, resultBuild.orientationY, resultBuild.orientationZ,
+        resultBuild.accX, resultBuild.accY, resultBuild.accZ]
         this.observationsBuild.push(obs);
     }
 

@@ -14,7 +14,7 @@ import { NetworkService } from 'src/services/network.service';
 import { timer, of, interval } from 'rxjs';
 import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
 import { registerPlugin } from "@capacitor/core";
-
+import { DataVisualizationService } from 'src/services/data-visualization.service';
 
 @Component({
   selector: 'app-tab1',
@@ -22,16 +22,6 @@ import { registerPlugin } from "@capacitor/core";
   styleUrls: ['tab1.page.scss']
 })
 
-// maxDataSize:
-// The number of bytes that can be loaded before the server stops loading more entities and returns the result is 25000000 (25 MB).
-
-// ideeeee
-// cand se da stop journey, salvez in telefon user tot fisierul deja formatat care se trimite la 
-// frost server. Deci nu am nevoie sa salvez fiecare senzor in parte in memorie telefon. 
-// Datele le salvez intr un array, la STOPJOURNEY formatez obj pt frost, il fac json si in salvez in mem telefon.
-// cand am net, atunci il trimit. Chiar daca app se inchide, fisierul pt frost este salvat. 
-
-// in timpul calatoriei, app va colecta date si din background
 
 export class Tab1Page implements OnInit {
   subscription = new Subscription();
@@ -40,7 +30,7 @@ export class Tab1Page implements OnInit {
   deviceId: string;
   startJourney: boolean = false;
 
-  allGeolocationData: GeolocationData[] = [];
+  allGeolocationData: GeolocationData[] = new Array();
   allAccelerationData: AccelerationData[] = [];
   allGyroscopeData: GyroscopeData[] = [];
 
@@ -65,9 +55,8 @@ export class Tab1Page implements OnInit {
     private platform: Platform,
     private backgroundMode: BackgroundMode,
     private networkService: NetworkService,
-  ) { 
-    this.allGeolocationData = [new GeolocationData()];
-  }
+    private dataVisualizationService: DataVisualizationService,
+  ) { }
 
   ngOnInit(): void { }
 
@@ -76,6 +65,11 @@ export class Tab1Page implements OnInit {
   }
 
   startCollectingData() {
+    this.allGyroscopeData = [];
+    this.allAccelerationData = [];
+    this.allGeolocationData = [];
+    this.subscription = new Subscription();
+
     this.startJourney = true;
     this.getCoordsAltitudeVelocity();
     this.getAcceleration();
@@ -117,6 +111,16 @@ export class Tab1Page implements OnInit {
     });
   }
 
+  test(){
+    this.dataVisualizationService.checkIfNewDevice("5e0a40edd12582ac").then(res => {
+      console.log(res)
+    });
+
+    // this.dataVisualizationService.sendThingForProject(3, "5e0a40edd12582ac").subscribe(res => {
+    //   console.log(res)
+    // })
+  }
+
   getGyroscope() {
     this.subscription.add(this.gyroscope.watch({ frequency: 10000 }).subscribe(
       (orientation: GyroscopeOrientation) => {
@@ -151,89 +155,9 @@ export class Tab1Page implements OnInit {
     ));
   }
 
+
   getCoordsAltitudeVelocity() {
-    //this.getCoordsOnlyForeground();
-    this.getCoordsBackground();
-  }
-
-  getCoordsBackground() {
-    let options = {
-      backgroundMessage: "Cancel to prevent battery drain.",
-      backgroundTitle: "Tracking You.",
-      requestPermissions: true,
-      stale: false,
-      interval: 10000 
-      //distanceFilter: 0
-    }
-    
-      let last_location;
-      this.BackgroundGeolocation.addWatcher(
-        options,
-        function (location) {
-            last_location = location || undefined;
-            let geolocationData = new GeolocationData();
-            
-            geolocationData.timeStamp = location.time;
-            geolocationData.coordinatesLat = location.longitude;
-            geolocationData.coordinatesLong = location.latitude;
-            geolocationData.altitude = location.altitudeAccuracy;
-            geolocationData.velocity = location.speed;
-
-            alert(" merg "+ geolocationData.coordinatesLong);
-            try{
-              //this.allGeolocationData.push(geolocationData)
-              alert(this.allGeolocationData[0]);
-              alert(this.allGeolocationData[0].altitude);
-              this.allGeolocationData.push(geolocationData);
-            } catch(error){
-              alert(error);
-              alert(this.allGeolocationData[0].altitude);
-            }
-            
-            alert(" merge "+ location.longitude);
-        }
-      ).then(function (id) {
-          setTimeout(function () {
-              this.BackgroundGeolocation.removeWatcher({id});
-          });
-      });
-  
-   
-
-    // this.BackgroundGeolocation.addWatcher(options,
-    //   function callback(location, error) {
-    //     if (error) {
-    //       if (error.code === "NOT_AUTHORIZED") {
-    //         if (window.confirm(
-    //           "This app needs your location, " +
-    //           "but does not have permission.\n\n" +
-    //           "Open settings now?"
-    //         )) {
-    //           this.BackgroundGeolocation.openSettings();
-    //         }
-    //       }
-    //       return alert(error.message);
-    //     }
-    //     else {
-    //       let geolocationData = new GeolocationData();
-    //       geolocationData.timeStamp = location.time;
-    //       geolocationData.coordinatesLat = location.longitude;
-    //       geolocationData.coordinatesLong = location.latitude;
-    //       geolocationData.altitude = location.altitudeAccuracy;
-    //       geolocationData.velocity = location.speed;
-    //       this.allGeolocationData.push(geolocationData);
-    //       alert(" mergeee "+ location.longitude);
-    //     }
-    //   }).then((watcher_id: any) => {
-    //     this.BackgroundGeolocation.removeWatcher({
-    //       id: watcher_id
-    //  });
-    //   })
-
-  }
-
-  getCoordsOnlyForeground() {
-    interval(10000).subscribe(res =>
+    this.subscription.add(interval(10000).subscribe(res =>
       this.geolocation.getCurrentPosition({ enableHighAccuracy: true }).then((position) => {
         let geolocationData = new GeolocationData();
         var geoposition = (position as Geoposition);
@@ -247,7 +171,7 @@ export class Tab1Page implements OnInit {
       }).catch((error) => {
         console.log('Error getting location', error);
       })
-    )
+    ))
   }
 
 

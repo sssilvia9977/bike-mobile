@@ -17,6 +17,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { FrostCommunication } from 'src/services/frost-communication.service';
 import { NetworkService } from 'src/services/network.service';
+import { DataVisualizationService } from 'src/services/data-visualization.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { NetworkService } from 'src/services/network.service';
     DeviceMotion,
     AndroidPermissions,
     LocationAccuracy,
-    BackgroundMode
+    BackgroundMode,
+    DataVisualizationService
   ],
   exports: [LoginScreenRoutingModule],
   bootstrap: [AppComponent],
