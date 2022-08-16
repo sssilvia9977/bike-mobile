@@ -6,12 +6,9 @@ import { PlacesService } from './../../services/places.service'
 import { Gyroscope, GyroscopeOrientation, GyroscopeOptions } from '@ionic-native/gyroscope/ngx';
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { Platform } from '@ionic/angular';
-import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
-import { FrostCommunication } from 'src/services/frost-communication.service';
 import { NetworkService } from 'src/services/network.service';
-import { timer, of, interval } from 'rxjs';
+import { interval } from 'rxjs';
 import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
 import { registerPlugin } from "@capacitor/core";
 import { DataVisualizationService } from 'src/services/data-visualization.service';
@@ -51,9 +48,6 @@ export class Tab1Page implements OnInit {
     private deviceMotion: DeviceMotion,
     private androidPermissions: AndroidPermissions,
     private locationAccuracy: LocationAccuracy,
-    private frostCommunication: FrostCommunication,
-    private platform: Platform,
-    private backgroundMode: BackgroundMode,
     private networkService: NetworkService,
     private dataVisualizationService: DataVisualizationService,
   ) { }

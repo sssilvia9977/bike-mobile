@@ -6,8 +6,8 @@ import { ProjectThingDto } from 'src/constants/data-vis';
 
 @Injectable()
 export class DataVisualizationService {
-    private baseUrl: string = "http://192.168.100.8:8080/DATA-VISUALIZATION-SERVER";  
-   // private baseUrl: string = "http://193.226.7.70:8080/DATA-VISUALIZATION-SERVER"; // pune ip server ut 
+   // private baseUrl: string = "http://192.168.100.8:8080/DATA-VISUALIZATION-SERVER";  
+    private baseUrl: string = "http://193.226.7.70:8099/DATA-VISUALIZATION-SERVER";
 
     private projectThingUrl: string = this.baseUrl + "/project-thing"
 

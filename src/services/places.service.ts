@@ -51,7 +51,7 @@ export class PlacesService {
     ) {
         this.canSendDataCheck(allGeolocationData, allAccelerationData, allGyroscopeData);
         if (this.canSendData) {
-            for (let i = 0; i < allAccelerationData.length; i++) {
+            for (let i = 0; i < allGeolocationData.length; i++) {
                 let resultBuild: Result = new Result();
                 resultBuild.accX = allAccelerationData[i].accelerationX;
                 resultBuild.accY = allAccelerationData[i].accelerationY;
@@ -90,9 +90,9 @@ export class PlacesService {
                     );
                 });
             }
+            this.multiDatastreams = new MultiDatastreams();
+            this.observationsBuild = [];
         })
-
-
 
     }
 
